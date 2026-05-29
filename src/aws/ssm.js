@@ -3,6 +3,7 @@ import {
   GetParametersByPathCommand,
   GetParameterCommand,
   PutParameterCommand,
+  DeleteParameterCommand,
 } from "@aws-sdk/client-ssm";
 import { resolveCredentials, resolveRegion } from "./credentials.js";
 
@@ -44,4 +45,9 @@ export async function saveSecret(client, { name, value, type = "SecureString" })
     new PutParameterCommand({ Name: name, Value: value, Type: type, Overwrite: true })
   );
   return { name, version: res.Version };
+}
+
+export async function deleteSecret(client, name) {
+  await client.send(new DeleteParameterCommand({ Name: name }));
+  return { name };
 }
