@@ -5,11 +5,22 @@
   "bin": { "ssmctl": "src/cli.js" },
   "scripts": {
     "ssm": "node src/cli.js",
-    "test": "node --test"
+    "test": "node --test",
+    "dev": "concurrently -k -n api,web \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "node --watch src/server/index.js",
+    "dev:web": "npm --prefix web run dev",
+    "build": "npm --prefix web run build",
+    "start": "NODE_ENV=production node src/server/index.js",
+    "test:web": "npm --prefix web test"
   },
   "dependencies": {
     "@aws-sdk/client-ssm": "^3.0.0",
     "@aws-sdk/credential-providers": "^3.0.0",
-    "better-sqlite3": "^11.0.0"
+    "better-sqlite3": "^11.0.0",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "supertest": "^7.0.0"
   }
 }
