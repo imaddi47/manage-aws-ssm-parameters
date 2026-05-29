@@ -1,3 +1,7 @@
+/**
+ * Selectable list of parameters (name + type).
+ * @param {{ items: Array<{ name: string, type: string }>, selected: string|null, onSelect: (name: string) => void }} props
+ */
 export default function TreeList({ items, selected, onSelect }) {
   if (!items.length) return <p className="muted">No parameters found.</p>;
   return (

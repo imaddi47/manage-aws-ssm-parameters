@@ -6,6 +6,13 @@ import { asyncHandler, HttpError } from "../middleware/errors.js";
 
 const ALLOWED_TYPES = ["SecureString", "String", "StringList"];
 
+/**
+ * Build the `/api/secrets` router (list, reveal, create/update, delete).
+ * Mutations are gated by {@link requirePassphrase}; every action is audited and
+ * decrypted values are never written to the audit log.
+ * @param {{ client: import("@aws-sdk/client-ssm").SSMClient, db: import("better-sqlite3").Database, passphrase: string|undefined }} deps
+ * @returns {import("express").Router}
+ */
 export function createSecretsRouter({ client, db, passphrase }) {
   const router = Router();
 

@@ -13,16 +13,32 @@ async function handle(res) {
   return body.data;
 }
 
+/**
+ * List parameters under a path (names + types only; not decrypted).
+ * @param {string} [path]
+ * @returns {Promise<Array<{ name: string, type: string }>>}
+ */
 export function listSecrets(path = "/") {
   const qs = new URLSearchParams({ path }).toString();
   return fetch(`/api/secrets?${qs}`).then(handle);
 }
 
+/**
+ * Fetch a single decrypted parameter value.
+ * @param {string} name
+ * @returns {Promise<{ name: string, value: string, type: string, version: number }>}
+ */
 export function revealSecret(name) {
   const qs = new URLSearchParams({ name }).toString();
   return fetch(`/api/secrets/value?${qs}`).then(handle);
 }
 
+/**
+ * Create or update a parameter (requires the passphrase).
+ * @param {{ name: string, value: string, type?: string }} params
+ * @param {string} passphrase
+ * @returns {Promise<{ name: string, version: number }>}
+ */
 export function saveSecret({ name, value, type = "SecureString" }, passphrase) {
   return fetch("/api/secrets", {
     method: "POST",
@@ -31,6 +47,12 @@ export function saveSecret({ name, value, type = "SecureString" }, passphrase) {
   }).then(handle);
 }
 
+/**
+ * Delete a parameter (requires the passphrase).
+ * @param {string} name
+ * @param {string} passphrase
+ * @returns {Promise<{ name: string }>}
+ */
 export function deleteSecret(name, passphrase) {
   const qs = new URLSearchParams({ name }).toString();
   return fetch(`/api/secrets?${qs}`, {

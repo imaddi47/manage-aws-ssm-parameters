@@ -1,6 +1,13 @@
 import { timingSafeEqual } from "node:crypto";
 import { HttpError } from "./errors.js";
 
+/**
+ * Build middleware that gates a route behind the `X-SSM-Passphrase` header,
+ * compared to `expected` in constant time. Responds 503 if `expected` is unset,
+ * 401 if the header is missing or wrong.
+ * @param {string|undefined} expected - The configured passphrase.
+ * @returns {import("express").RequestHandler}
+ */
 export function requirePassphrase(expected) {
   return function passphraseGate(req, _res, next) {
     if (!expected) {

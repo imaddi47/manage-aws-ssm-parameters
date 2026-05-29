@@ -6,6 +6,10 @@ import RevealModal from "./components/RevealModal.jsx";
 import EditModal from "./components/EditModal.jsx";
 import DeleteModal from "./components/DeleteModal.jsx";
 
+/**
+ * Root admin UI: loads the parameter list and orchestrates the reveal / edit /
+ * create / delete modals.
+ */
 export default function App() {
   const [items, setItems] = useState([]);
   const [selected, setSelected] = useState(null);

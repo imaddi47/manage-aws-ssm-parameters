@@ -47,6 +47,12 @@ export async function saveSecret(client, { name, value, type = "SecureString" })
   return { name, version: res.Version };
 }
 
+/**
+ * Delete an SSM parameter.
+ * @param {import("@aws-sdk/client-ssm").SSMClient} client
+ * @param {string} name - Parameter name.
+ * @returns {Promise<{ name: string }>}
+ */
 export async function deleteSecret(client, name) {
   await client.send(new DeleteParameterCommand({ Name: name }));
   return { name };

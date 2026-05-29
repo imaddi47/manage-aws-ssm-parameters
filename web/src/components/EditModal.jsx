@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 
+/**
+ * Create/update modal; collects value, type, and the passphrase.
+ * @param {{ open: boolean, mode: "create"|"edit", initialName?: string, onSave: (params: { name: string, value: string, type: string }, passphrase: string) => Promise<void>, onClose: () => void }} props
+ */
 export default function EditModal({ open, mode, initialName = "", onSave, onClose }) {
   const [name, setName] = useState(initialName);
   const [value, setValue] = useState("");

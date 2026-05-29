@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
 
+/**
+ * Delete-confirmation modal: enables the action only when the typed name matches
+ * exactly and a passphrase is present.
+ * @param {{ open: boolean, name: string|null, onConfirm: (passphrase: string) => Promise<void>, onClose: () => void }} props
+ */
 export default function DeleteModal({ open, name, onConfirm, onClose }) {
   const [confirmName, setConfirmName] = useState("");
   const [passphrase, setPassphrase] = useState("");
