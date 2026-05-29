@@ -5,7 +5,7 @@
   "bin": { "ssmctl": "src/cli.js" },
   "scripts": {
     "ssm": "node src/cli.js",
-    "test": "node --test",
+    "test": "node --test test/aws/*.js test/server/*.js",
     "dev": "concurrently -k -n api,web \"npm:dev:api\" \"npm:dev:web\"",
     "dev:api": "node --watch src/server/index.js",
     "dev:web": "npm --prefix web run dev",
