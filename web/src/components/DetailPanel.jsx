@@ -12,14 +12,14 @@ import { splitParamName } from "../lib/paramName.js";
  *   nameInput: string,
  *   onNameInput: (v: string) => void,
  *   onValueChange: (v: string) => void,
- *   onReveal: () => void, onEdit: () => void, onDelete: () => void, onNew: () => void,
+ *   onReveal: () => void, onEdit: () => void, onDelete: () => void,
  *   onSave: () => void, onCancel: () => void
  * }} props
  */
 export default function DetailPanel(props) {
   const {
     secret, mode, editorName, value, nameInput, onNameInput, onValueChange,
-    onReveal, onEdit, onDelete, onNew, onSave, onCancel,
+    onReveal, onEdit, onDelete, onSave, onCancel,
   } = props;
 
   if (mode === "create") {
@@ -49,7 +49,6 @@ export default function DetailPanel(props) {
         {!editing && <button onClick={onReveal}>Reveal</button>}
         {!editing && <button className="primary" onClick={onEdit}>Edit</button>}
         {!editing && <button className="danger" onClick={onDelete}>Delete</button>}
-        {!editing && <button onClick={onNew}>New</button>}
         {editing && <button className="primary" onClick={onSave}>Save</button>}
         {editing && <button onClick={onCancel}>Cancel</button>}
       </div>

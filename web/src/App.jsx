@@ -202,6 +202,7 @@ export default function App() {
         regions={regions}
         region={region}
         onRegionChange={onRegionChange}
+        onNew={onNew}
         query={query}
         onQueryChange={setQuery}
       />
@@ -222,7 +223,6 @@ export default function App() {
             onReveal={onReveal}
             onEdit={onEdit}
             onDelete={onDelete}
-            onNew={onNew}
             onSave={onSaveRequest}
             onCancel={detailCancel}
           />

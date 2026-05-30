@@ -94,3 +94,37 @@
   /* Toolbar height — used for layout math */
   --toolbar-h: 48px;
 }
+
+/* ─── Light theme ────────────────────────────────────────────────────────────
+   Apple/Tailscale light surfaces. The shaded primary gradient, neon accents,
+   radii and motion all carry over from :root unchanged. The code editor stays
+   dark in both themes (--editor-bg is intentionally not overridden).
+   ──────────────────────────────────────────────────────────────────────── */
+
+[data-theme="light"] {
+  /* Backgrounds — near-white layered surfaces */
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --surface-2: #f7f9fc;
+  --surface-hover: #eef2f8;
+  --surface-active: #e3ecfb;
+
+  /* Borders — hairline grays */
+  --border: #d9e0ea;
+  --border-subtle: #e8ecf3;
+  --border-focus: #9cbef0;
+
+  /* Text — dark slate scale */
+  --text: #2a3340;
+  --text-muted: #67738a;
+  --text-dim: #98a2b2;
+  --text-strong: #0c1626;
+
+  /* Soften the primary glow on light surfaces */
+  --primary-glow: 0 2px 16px rgba(37, 99, 235, 0.22);
+
+  /* Elevation — lighter, cooler shadows */
+  --shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.08);
+  --shadow: 0 4px 16px rgba(16, 24, 40, 0.1);
+  --shadow-lg: 0 20px 50px rgba(16, 24, 40, 0.16);
+}

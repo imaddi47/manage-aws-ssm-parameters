@@ -104,6 +104,7 @@ body {
 /* ─── Region switcher ───────────────────────────────────────────────────── */
 
 .region {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -126,8 +127,9 @@ body {
   border-color: var(--border-focus);
 }
 
-.region:focus-visible {
+.region:focus-within {
   box-shadow: 0 0 0 3px rgba(46, 74, 122, 0.35);
+  border-color: var(--border-focus);
 }
 
 .region .dot {
@@ -137,6 +139,43 @@ body {
   background: var(--neon-green);
   box-shadow: 0 0 6px 1px var(--neon-green-glow);
   flex-shrink: 0;
+}
+
+/* Strip the native <select> chrome so it reads as part of the dark pill */
+.region select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  margin: 0;
+  padding: 0 15px 0 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text);
+  cursor: pointer;
+  outline: none;
+}
+
+/* Popup options — themed where the OS honours it */
+.region select option {
+  background: var(--surface);
+  color: var(--text);
+}
+
+/* Custom caret (token-driven, so it follows the theme) */
+.region::after {
+  content: "";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid var(--text-muted);
+  border-bottom: 1.5px solid var(--text-muted);
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
 }
 
 /* ─── Layout ────────────────────────────────────────────────────────────── */
@@ -239,7 +278,7 @@ body {
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 600;
-  color: #dce7ff;
+  color: var(--text-strong);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -420,7 +459,7 @@ button.danger:hover:not(:disabled) {
   background: rgba(6, 8, 16, 0.96);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  color: var(--text-strong);
+  color: #eef2fc; /* island is always a dark pill → fixed light text */
   border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: var(--radius-pill);
   padding: 8px 16px;
@@ -489,7 +528,7 @@ button.danger:hover:not(:disabled) {
   font-size: 13px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--text-strong);
+  color: #eef2fc;
   border-radius: var(--radius-sm);
   padding: 6px 10px;
   outline: none;
@@ -546,4 +585,62 @@ button.danger:hover:not(:disabled) {
     transition: none !important;
     animation: none !important;
   }
+}
+
+/* ─── Theme toggle ──────────────────────────────────────────────────────── */
+
+.theme-toggle {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+.theme-toggle:hover:not(:disabled) {
+  color: var(--text);
+}
+
+.theme-toggle svg {
+  width: 15px;
+  height: 15px;
+  display: block;
+}
+
+/* ─── Light theme component fix-ups ─────────────────────────────────────────
+   Most surfaces follow the tokens in theme.css. These few rules retune bits
+   that were tuned for the dark pill / dark surfaces.
+   ──────────────────────────────────────────────────────────────────────── */
+
+[data-theme="light"] .toolbar {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.96) 0%,
+    rgba(244, 246, 249, 0.92) 100%
+  );
+}
+
+/* Give secondary buttons a visible hover edge on light surfaces */
+[data-theme="light"] button:hover:not(:disabled) {
+  border-color: var(--border-focus);
+}
+
+[data-theme="light"] .badge {
+  border-color: rgba(5, 150, 105, 0.3);
+  background: rgba(5, 150, 105, 0.08);
+  color: #047857;
+}
+
+[data-theme="light"] button.danger {
+  background: rgba(220, 38, 38, 0.06);
+  border-color: rgba(220, 38, 38, 0.28);
+  color: #dc2626;
+}
+
+[data-theme="light"] button.danger:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.11);
+  border-color: rgba(220, 38, 38, 0.45);
 }
