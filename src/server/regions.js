@@ -20,8 +20,11 @@ export const DEFAULT_REGION = "us-east-1";
 
 /**
  * @param {unknown} region
- * @returns {boolean} true if `region` is in the curated allowlist.
+ * @param {string[]} [allowed] - the set to validate against. Defaults to the
+ *   curated static list; callers pass the dynamically-resolved set so the live
+ *   account regions are the allowlist.
+ * @returns {boolean} true if `region` is in `allowed`.
  */
-export function isAllowedRegion(region) {
-  return typeof region === "string" && AWS_REGIONS.includes(region);
+export function isAllowedRegion(region, allowed = AWS_REGIONS) {
+  return typeof region === "string" && allowed.includes(region);
 }

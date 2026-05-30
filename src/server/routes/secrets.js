@@ -8,30 +8,34 @@ import { isAllowedRegion, DEFAULT_REGION } from "../regions.js";
 const ALLOWED_TYPES = ["SecureString", "String", "StringList"];
 
 /**
- * Resolve and validate a region, falling back to the default.
+ * Resolve and validate a region against the currently-allowed set, falling back
+ * to the default.
  * @param {unknown} value
+ * @param {string[]} allowed - regions permitted for this request (the resolved set).
  * @returns {string}
  */
-function resolveRegion(value) {
+function resolveRegion(value, allowed) {
   const region = value ?? DEFAULT_REGION;
-  if (!isAllowedRegion(region)) throw new HttpError(400, `Unsupported region: ${region}`);
+  if (!isAllowedRegion(region, allowed)) throw new HttpError(400, `Unsupported region: ${region}`);
   return region;
 }
 
 /**
  * Build the `/api/secrets` router. Region is taken per request (query for
- * GET/DELETE, body for POST); a client is obtained via `getClient(region)`.
- * Mutations are gated by {@link requirePassphrase}; decrypted values are never audited.
- * @param {{ getClient: (region: string) => import("@aws-sdk/client-ssm").SSMClient, db: import("better-sqlite3").Database, passphrase: string|undefined }} deps
+ * GET/DELETE, body for POST), validated against the set from `getRegions()`,
+ * and a client is obtained via `getClient(region)`. Mutations are gated by
+ * {@link requirePassphrase}; decrypted values are never audited.
+ * @param {{ getClient: (region: string) => import("@aws-sdk/client-ssm").SSMClient, getRegions: () => Promise<{ regions: string[], default: string }>, db: import("better-sqlite3").Database, passphrase: string|undefined }} deps
  * @returns {import("express").Router}
  */
-export function createSecretsRouter({ getClient, db, passphrase }) {
+export function createSecretsRouter({ getClient, getRegions, db, passphrase }) {
   const router = Router();
 
   router.get(
     "/",
     asyncHandler(async (req, res) => {
-      const region = resolveRegion(req.query.region);
+      const { regions: allowed } = await getRegions();
+      const region = resolveRegion(req.query.region, allowed);
       const path = req.query.path || "/";
       const recursive = req.query.recursive !== "false";
       const items = await listSecrets(getClient(region), { path, recursive });
@@ -43,7 +47,8 @@ export function createSecretsRouter({ getClient, db, passphrase }) {
   router.get(
     "/value",
     asyncHandler(async (req, res) => {
-      const region = resolveRegion(req.query.region);
+      const { regions: allowed } = await getRegions();
+      const region = resolveRegion(req.query.region, allowed);
       const name = req.query.name;
       if (!name) throw new HttpError(400, "Missing 'name' query parameter");
       const secret = await getSecret(getClient(region), name);
@@ -57,7 +62,8 @@ export function createSecretsRouter({ getClient, db, passphrase }) {
     requirePassphrase(passphrase),
     asyncHandler(async (req, res) => {
       const { name, value, type, region: regionInput } = req.body ?? {};
-      const region = resolveRegion(regionInput);
+      const { regions: allowed } = await getRegions();
+      const region = resolveRegion(regionInput, allowed);
       if (!name || typeof value !== "string" || value.length === 0) {
         throw new HttpError(400, "Body must include 'name' and a non-empty 'value'");
       }
@@ -74,7 +80,8 @@ export function createSecretsRouter({ getClient, db, passphrase }) {
     "/",
     requirePassphrase(passphrase),
     asyncHandler(async (req, res) => {
-      const region = resolveRegion(req.query.region);
+      const { regions: allowed } = await getRegions();
+      const region = resolveRegion(req.query.region, allowed);
       const name = req.query.name;
       if (!name) throw new HttpError(400, "Missing 'name' query parameter");
       await deleteSecret(getClient(region), name);

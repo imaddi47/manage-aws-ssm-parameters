@@ -1,6 +1,8 @@
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { makeClient } from "../aws/ssm.js";
+import { makeEc2Client, listEnabledRegions } from "../aws/regions.js";
+import { AWS_REGIONS, DEFAULT_REGION } from "./regions.js";
 import { openMemory } from "../memory.js";
 import { createApp } from "./app.js";
 
@@ -20,11 +22,34 @@ function getClient(region) {
   return clients.get(region);
 }
 
+/**
+ * Resolve the selectable regions: the set enabled for the account (via EC2
+ * DescribeRegions), cached for the process lifetime. Falls back to the curated
+ * static list if discovery fails (e.g. missing ec2:DescribeRegions). The
+ * resolved set is also the per-request validation allowlist.
+ * @returns {Promise<{ regions: string[], default: string }>}
+ */
+let regionCache = null;
+async function getRegions() {
+  if (!regionCache) {
+    try {
+      const enabled = await listEnabledRegions(makeEc2Client({ region: DEFAULT_REGION, profile }));
+      regionCache = enabled.length ? enabled : AWS_REGIONS;
+    } catch {
+      return { regions: AWS_REGIONS, default: DEFAULT_REGION };
+    }
+  }
+  return { regions: regionCache, default: DEFAULT_REGION };
+}
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const staticDir =
   process.env.NODE_ENV === "production" ? join(__dirname, "../../web/dist") : undefined;
 
-const app = createApp({ getClient, db, passphrase, staticDir });
+const app = createApp({ getClient, getRegions, db, passphrase, staticDir });
+
+// Warm the region cache (non-blocking) so the validation allowlist is ready.
+getRegions().catch(() => {});
 
 app.listen(PORT, HOST, () => {
   console.log(`SSM admin UI listening on http://${HOST}:${PORT}`);

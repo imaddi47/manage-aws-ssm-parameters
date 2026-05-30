@@ -2,7 +2,9 @@
   "name": "manage-ssm-secrets",
   "version": "0.1.0",
   "type": "module",
-  "bin": { "ssmctl": "src/cli.js" },
+  "bin": {
+    "ssmctl": "src/cli.js"
+  },
   "scripts": {
     "ssm": "node src/cli.js",
     "test": "node --test test/aws/*.js test/server/*.js",
@@ -14,6 +16,7 @@
     "test:web": "npm --prefix web test"
   },
   "dependencies": {
+    "@aws-sdk/client-ec2": "^3.1057.0",
     "@aws-sdk/client-ssm": "^3.0.0",
     "@aws-sdk/credential-providers": "^3.0.0",
     "better-sqlite3": "^11.0.0",

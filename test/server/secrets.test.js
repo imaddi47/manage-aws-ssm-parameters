@@ -123,3 +123,27 @@ test("maps AWS ParameterNotFound to 404", async () => {
   const res = await request(app).get("/api/secrets/value?region=us-east-1&name=" + enc("/x"));
   assert.equal(res.status, 404);
 });
+
+test("region validation uses the dynamically-resolved set (getRegions)", async () => {
+  const db = openMemory(":memory:");
+  const fake = makeFake();
+  const calls = [];
+  const getClient = (region) => {
+    calls.push(region);
+    return fake;
+  };
+  // Account-enabled set includes an opt-in region absent from the static list,
+  // and omits a region (eu-west-1) that IS in the static list.
+  const getRegions = async () => ({ regions: ["us-east-1", "ap-east-1"], default: "us-east-1" });
+  const app = createApp({ getClient, getRegions, db, passphrase: "pw" });
+
+  const accepted = await request(app).get("/api/secrets?path=/&region=ap-east-1");
+  assert.equal(accepted.status, 200);
+  assert.equal(calls.at(-1), "ap-east-1");
+
+  const rejected = await request(app).get("/api/secrets?path=/&region=eu-west-1");
+  assert.equal(rejected.status, 400);
+
+  const regions = await request(app).get("/api/regions");
+  assert.deepEqual(regions.body.data.regions, ["us-east-1", "ap-east-1"]);
+});

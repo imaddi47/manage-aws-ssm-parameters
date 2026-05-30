@@ -141,11 +141,9 @@ body {
   flex-shrink: 0;
 }
 
-/* Strip the native <select> chrome so it reads as part of the dark pill */
-.region select {
+/* Trigger button shows the current region inside the pill */
+.region-trigger {
   appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
   margin: 0;
   padding: 0 15px 0 0;
   border: 0;
@@ -158,10 +156,106 @@ body {
   outline: none;
 }
 
-/* Popup options — themed where the OS honours it */
-.region select option {
+.region-trigger:hover:not(:disabled) {
+  background: transparent;
+  border-color: transparent;
+  filter: none;
+}
+
+/* Filterable dropdown popover */
+.region-pop {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px;
   background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  z-index: 60;
+}
+
+.region-filter {
+  font: inherit;
+  font-size: 12px;
+  padding: 6px 9px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
   color: var(--text);
+  border-radius: var(--radius-sm);
+  outline: none;
+}
+
+.region-filter::placeholder {
+  color: var(--text-dim);
+}
+
+.region-filter:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(46, 74, 122, 0.3);
+}
+
+.region-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 260px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.region-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.region-list::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+
+.region-opt {
+  width: 100%;
+  text-align: left;
+  appearance: none;
+  margin: 0;
+  padding: 6px 9px;
+  border: 0;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 12px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.region-opt:hover:not(:disabled) {
+  background: var(--surface-hover);
+  border-color: transparent;
+  filter: none;
+}
+
+.region-opt.active {
+  background: var(--surface-active);
+  color: var(--text-strong);
+}
+
+.region-empty {
+  padding: 6px 9px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* Flip the caret while the dropdown is open */
+.region[data-open]::after {
+  transform: translateY(-30%) rotate(-135deg);
 }
 
 /* Custom caret (token-driven, so it follows the theme) */
