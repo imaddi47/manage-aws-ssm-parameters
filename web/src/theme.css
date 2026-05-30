@@ -1,0 +1,96 @@
+/* ─── Design Tokens ─────────────────────────────────────────────────────────
+   Apple-grade typography · Tailscale clean structure
+   Shaded gradient primary · Neon status accents · Spring motion
+   ──────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+    Inter, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code",
+    Menlo, monospace;
+
+  /* Backgrounds — deep navy-black layering */
+  --bg: #08101e;
+  --surface: #0d1629;
+  --surface-2: #070d1a;
+  --surface-hover: #111f38;
+  --surface-active: #142444;
+  --editor-bg: #050912;
+
+  /* Borders */
+  --border: #1a2640;
+  --border-subtle: #111d30;
+  --border-focus: #2e4a7a;
+
+  /* Text scale */
+  --text: #c9d4e8;
+  --text-muted: #4d607e;
+  --text-dim: #3a4d68;
+  --text-strong: #eef2fc;
+
+  /* Primary — vertical gradient with depth, not flat */
+  --primary-from: #4f93f8;
+  --primary-mid: #3b7df0;
+  --primary-to: #2563eb;
+  --primary-grad: linear-gradient(
+    180deg,
+    var(--primary-from) 0%,
+    var(--primary-mid) 50%,
+    var(--primary-to) 100%
+  );
+  /* Subtle sheen overlay on primary buttons */
+  --primary-sheen: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.13) 0%,
+    rgba(255, 255, 255, 0.0) 60%
+  );
+  --primary-text: #ffffff;
+  --primary-border: rgba(59, 125, 240, 0.6);
+  --primary-glow: 0 2px 20px rgba(59, 125, 240, 0.35);
+
+  /* Neon accent palette — for status island */
+  --neon-blue: #5cabfc;
+  --neon-blue-glow: rgba(92, 171, 252, 0.5);
+  --neon-amber: #f5a623;
+  --neon-amber-glow: rgba(245, 166, 35, 0.5);
+  --neon-green: #2fd69a;
+  --neon-green-glow: rgba(47, 214, 154, 0.5);
+  --neon-red: #f5626e;
+  --neon-red-glow: rgba(245, 98, 110, 0.5);
+
+  /* Radii */
+  --radius-xs: 5px;
+  --radius-sm: 8px;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-pill: 999px;
+
+  /* Elevation */
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.3);
+  --shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.55);
+  --shadow-island: 0 8px 40px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+
+  /* Spacing rhythm */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+
+  /* Motion — spring-like, snappy settle */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --duration-fast: 110ms;
+  --duration: 200ms;
+  --duration-slow: 340ms;
+  --spring: cubic-bezier(0.34, 1.4, 0.64, 1); /* slight overshoot */
+
+  /* Toolbar height — used for layout math */
+  --toolbar-h: 48px;
+}
