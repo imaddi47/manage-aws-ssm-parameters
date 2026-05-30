@@ -30,6 +30,16 @@ export default function App() {
   const regionRef = useRef(region);
   regionRef.current = region;
 
+  // Monotonic operation id. Starting any user action bumps it, which invalidates
+  // the in-flight continuations of earlier actions (a late reveal/edit response,
+  // the post-save timer) so a stale async result can't clobber newer UI state or
+  // re-surface a decrypted value the user has already navigated away from.
+  const opRef = useRef(0);
+  const beginOp = useCallback(() => {
+    opRef.current += 1;
+    return opRef.current;
+  }, []);
+
   const goIdle = useCallback(() => {
     setIsland({ kind: "idle", region: regionRef.current, count: itemsRef.current.length });
   }, []);
@@ -64,6 +74,7 @@ export default function App() {
   const selectedSecret = items.find((i) => i.name === selected) || null;
 
   function onRegionChange(r) {
+    beginOp();
     setRegion(r);
     regionRef.current = r;
     setSelected(null);
@@ -73,6 +84,7 @@ export default function App() {
   }
 
   function onSelect(name) {
+    beginOp();
     setSelected(name);
     setMode("idle");
     setValue("");
@@ -80,37 +92,46 @@ export default function App() {
   }
 
   function onReveal() {
-    if (selected) setIsland({ kind: "revealConfirm", leaf: leafOf(selected) });
+    if (!selected) return;
+    beginOp();
+    setIsland({ kind: "revealConfirm", leaf: leafOf(selected) });
   }
 
   async function onConfirmReveal() {
+    const gen = beginOp();
     try {
       setIsland({ kind: "busy", label: "Revealing" });
       const data = await api.revealSecret(selected, regionRef.current);
+      if (opRef.current !== gen) return;
       setValue(data.value);
       setEditorName(selected);
       setMode("view");
       goIdle();
     } catch (e) {
+      if (opRef.current !== gen) return;
       setIsland({ kind: "error", message: e.message });
     }
   }
 
   async function onEdit() {
     if (!selected) return;
+    const gen = beginOp();
     try {
       setIsland({ kind: "busy", label: "Loading" });
       const data = await api.revealSecret(selected, regionRef.current); // auto-load (audited reveal)
+      if (opRef.current !== gen) return;
       setValue(data.value);
       setEditorName(selected);
       setMode("edit");
       goIdle();
     } catch (e) {
+      if (opRef.current !== gen) return;
       setIsland({ kind: "error", message: e.message });
     }
   }
 
   function onNew() {
+    beginOp();
     setSelected(null);
     setNameInput("");
     setValue("");
@@ -121,30 +142,39 @@ export default function App() {
   function onSaveRequest() {
     const name = mode === "create" ? nameInput.trim() : selected;
     if (!name) return;
+    beginOp();
     setIsland({ kind: "passphrase", label: `Passphrase to save ${leafOf(name)}` });
   }
 
   async function onSubmitPassphrase(pw) {
     const name = mode === "create" ? nameInput.trim() : selected;
+    const gen = beginOp();
     try {
       setIsland({ kind: "busy", label: "Saving" });
       const res = await api.saveSecret({ name, value, type: "SecureString" }, pw, regionRef.current);
       await loadList(regionRef.current);
+      if (opRef.current !== gen) return;
       setSelected(name);
       setEditorName(name);
       setMode("view");
       setIsland({ kind: "saved", version: res.version });
-      setTimeout(goIdle, 1600);
+      setTimeout(() => {
+        if (opRef.current === gen) goIdle();
+      }, 1600);
     } catch (e) {
+      if (opRef.current !== gen) return;
       setIsland({ kind: "error", message: e.message });
     }
   }
 
   function onDelete() {
-    if (selected) setIsland({ kind: "deleteConfirm", leaf: leafOf(selected) });
+    if (!selected) return;
+    beginOp();
+    setIsland({ kind: "deleteConfirm", leaf: leafOf(selected) });
   }
 
   async function onConfirmDelete(_typed, pw) {
+    const gen = beginOp();
     try {
       setIsland({ kind: "busy", label: "Deleting" });
       await api.deleteSecret(selected, pw, regionRef.current);
@@ -153,11 +183,13 @@ export default function App() {
       setValue("");
       await loadList(regionRef.current);
     } catch (e) {
+      if (opRef.current !== gen) return;
       setIsland({ kind: "error", message: e.message });
     }
   }
 
   function detailCancel() {
+    beginOp();
     setMode("idle");
     setValue("");
     goIdle();
