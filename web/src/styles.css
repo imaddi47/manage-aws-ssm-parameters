@@ -101,6 +101,36 @@ body {
   width: 260px;
 }
 
+/* Parameter type picker (create view) */
+.type-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  font: inherit;
+  font-size: 12px;
+  padding: 6px 28px 6px 10px;
+  background-color: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: var(--radius);
+  cursor: pointer;
+  outline: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236a7686' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 9px center;
+  background-size: 11px;
+}
+
+.type-select:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(46, 74, 122, 0.3);
+}
+
+.type-select option {
+  background: var(--surface);
+  color: var(--text);
+}
+
 /* ─── Region switcher ───────────────────────────────────────────────────── */
 
 .region {
@@ -416,12 +446,24 @@ body {
   text-overflow: ellipsis;
 }
 
-.item .path {
+.item .ptype {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
   font-size: 10px;
   color: var(--text-muted);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+/* Sensitive rows show a lock + amber type label */
+.item .ptype.is-secure {
+  color: var(--neon-amber);
+}
+
+.item .ptype svg {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
 }
 
 /* ─── Breadcrumb ────────────────────────────────────────────────────────── */
@@ -452,16 +494,29 @@ body {
 .badge {
   display: inline-flex;
   align-items: center;
+  gap: 4px;
   font-size: 10px;
   font-weight: 500;
   font-family: var(--font-mono);
   border-radius: var(--radius-xs);
   padding: 2px 7px;
-  border: 1px solid rgba(47, 214, 154, 0.25);
-  background: rgba(47, 214, 154, 0.07);
-  color: #a7f3d0;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-muted);
   letter-spacing: 0.04em;
   line-height: 1.6;
+}
+
+/* Sensitive (SecureString) parameters stand out in amber with a lock */
+.badge.secure {
+  border-color: rgba(245, 166, 35, 0.4);
+  background: rgba(245, 166, 35, 0.1);
+  color: var(--neon-amber);
+}
+
+.badge svg {
+  width: 11px;
+  height: 11px;
 }
 
 /* ─── Actions row ───────────────────────────────────────────────────────── */
@@ -763,10 +818,10 @@ button.danger:hover:not(:disabled) {
   border-color: var(--border-focus);
 }
 
-[data-theme="light"] .badge {
-  border-color: rgba(5, 150, 105, 0.3);
-  background: rgba(5, 150, 105, 0.08);
-  color: #047857;
+[data-theme="light"] .badge.secure {
+  border-color: rgba(180, 83, 9, 0.35);
+  background: rgba(180, 83, 9, 0.08);
+  color: #b45309;
 }
 
 [data-theme="light"] button.danger {

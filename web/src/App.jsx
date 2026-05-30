@@ -23,6 +23,7 @@ export default function App() {
   const [value, setValue] = useState("");
   const [editorName, setEditorName] = useState("");
   const [nameInput, setNameInput] = useState("");
+  const [newType, setNewType] = useState("SecureString");
   const [island, setIsland] = useState({ kind: "idle", region: "us-east-1", count: 0 });
   const [error, setError] = useState(null);
   const sidebar = useSidebar();
@@ -136,6 +137,7 @@ export default function App() {
     beginOp();
     setSelected(null);
     setNameInput("");
+    setNewType("SecureString");
     setValue("");
     setMode("create");
     goIdle();
@@ -150,10 +152,11 @@ export default function App() {
 
   async function onSubmitPassphrase(pw) {
     const name = mode === "create" ? nameInput.trim() : selected;
+    const type = mode === "create" ? newType : (selectedSecret?.type ?? "SecureString");
     const gen = beginOp();
     try {
       setIsland({ kind: "busy", label: "Saving" });
-      const res = await api.saveSecret({ name, value, type: "SecureString" }, pw, regionRef.current);
+      const res = await api.saveSecret({ name, value, type }, pw, regionRef.current);
       await loadList(regionRef.current);
       if (opRef.current !== gen) return;
       setSelected(name);
@@ -237,6 +240,8 @@ export default function App() {
             value={value}
             nameInput={nameInput}
             onNameInput={setNameInput}
+            newType={newType}
+            onNewType={setNewType}
             onValueChange={setValue}
             onReveal={onReveal}
             onEdit={onEdit}

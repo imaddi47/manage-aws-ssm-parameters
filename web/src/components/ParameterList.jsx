@@ -1,4 +1,5 @@
 import { splitParamName } from "../lib/paramName.js";
+import { LockIcon } from "./icons.jsx";
 
 /**
  * Grouped parameter list — parent path shown as a group header, leaf bold.
@@ -22,16 +23,22 @@ export default function ParameterList({ items, selected, query = "", onSelect })
       {[...groups.entries()].map(([group, rows]) => (
         <div key={group || "(root)"}>
           <div className="grp">{group || "/"}</div>
-          {rows.map((it) => (
-            <div
-              key={it.name}
-              className={it.name === selected ? "item active" : "item"}
-              onClick={() => onSelect(it.name)}
-            >
-              <span className="leaf">{it.leaf}</span>
-              <span className="path">{it.type}</span>
-            </div>
-          ))}
+          {rows.map((it) => {
+            const secure = it.type === "SecureString";
+            return (
+              <div
+                key={it.name}
+                className={it.name === selected ? "item active" : "item"}
+                onClick={() => onSelect(it.name)}
+              >
+                <span className="leaf">{it.leaf}</span>
+                <span className={secure ? "ptype is-secure" : "ptype"}>
+                  {secure && <LockIcon />}
+                  {it.type}
+                </span>
+              </div>
+            );
+          })}
         </div>
       ))}
     </div>

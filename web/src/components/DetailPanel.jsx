@@ -1,5 +1,6 @@
 import CodeEditor from "./CodeEditor.jsx";
 import { splitParamName } from "../lib/paramName.js";
+import { LockIcon } from "./icons.jsx";
 
 /**
  * Right-hand panel. Renders the selected parameter's header + actions and hosts
@@ -11,6 +12,8 @@ import { splitParamName } from "../lib/paramName.js";
  *   value: string,
  *   nameInput: string,
  *   onNameInput: (v: string) => void,
+ *   newType: string,
+ *   onNewType: (t: string) => void,
  *   onValueChange: (v: string) => void,
  *   onReveal: () => void, onEdit: () => void, onDelete: () => void,
  *   onSave: () => void, onCancel: () => void
@@ -18,7 +21,7 @@ import { splitParamName } from "../lib/paramName.js";
  */
 export default function DetailPanel(props) {
   const {
-    secret, mode, editorName, value, nameInput, onNameInput, onValueChange,
+    secret, mode, editorName, value, nameInput, onNameInput, newType, onNewType, onValueChange,
     onReveal, onEdit, onDelete, onSave, onCancel,
   } = props;
 
@@ -27,7 +30,12 @@ export default function DetailPanel(props) {
       <div>
         <div className="title">New parameter</div>
         <div className="actions">
-          <input className="search" style={{ width: 360 }} placeholder="/path/to/name" value={nameInput} aria-label="New name" onChange={(e) => onNameInput(e.target.value)} />
+          <input className="search" style={{ width: 320 }} placeholder="/path/to/name" value={nameInput} aria-label="New name" onChange={(e) => onNameInput(e.target.value)} />
+          <select className="type-select" value={newType} aria-label="Parameter type" onChange={(e) => onNewType(e.target.value)}>
+            <option value="SecureString">SecureString · sensitive</option>
+            <option value="String">String · general</option>
+            <option value="StringList">StringList · general</option>
+          </select>
           <button className="primary" disabled={!nameInput.trim()} onClick={onSave}>Save</button>
           <button onClick={onCancel}>Cancel</button>
         </div>
@@ -44,7 +52,13 @@ export default function DetailPanel(props) {
   return (
     <div>
       <div className="crumb">{group || "/"}</div>
-      <div className="title">{leaf} <span className="badge">{secret.type}</span></div>
+      <div className="title">
+        {leaf}
+        <span className={secret.type === "SecureString" ? "badge secure" : "badge"}>
+          {secret.type === "SecureString" && <LockIcon />}
+          {secret.type}
+        </span>
+      </div>
       <div className="actions">
         {!editing && <button onClick={onReveal}>Reveal</button>}
         {!editing && <button className="primary" onClick={onEdit}>Edit</button>}
