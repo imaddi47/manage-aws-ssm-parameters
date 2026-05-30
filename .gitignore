@@ -1,6 +1,7 @@
 node_modules/
 web/dist/
 .superpowers/
+docs/superpowers/
 .env
 .env.*
 !.env.example
