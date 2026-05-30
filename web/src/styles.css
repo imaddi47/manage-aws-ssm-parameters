@@ -181,6 +181,7 @@ body {
 /* ─── Layout ────────────────────────────────────────────────────────────── */
 
 .layout {
+  position: relative;
   display: grid;
   grid-template-columns: 300px 1fr;
   flex: 1;
@@ -213,6 +214,43 @@ body {
 .sidebar::-webkit-scrollbar-thumb {
   background: var(--border);
   border-radius: 2px;
+}
+
+.sidebar[data-collapsed] {
+  display: none;
+}
+
+/* ─── Sidebar resize handle ─────────────────────────────────────────────────
+   Absolutely positioned (so it never consumes a grid track); straddles the
+   sidebar/content boundary at `left: <sidebar width>`.
+   ──────────────────────────────────────────────────────────────────────── */
+
+.resizer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 10px;
+  transform: translateX(-50%);
+  cursor: ew-resize;
+  z-index: 20;
+}
+
+.resizer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: transparent;
+  transition: background var(--duration-fast) var(--ease);
+}
+
+.resizer:hover::after,
+.resizer:active::after {
+  background: var(--primary-mid);
+  box-shadow: 0 0 8px 1px var(--neon-blue-glow);
 }
 
 /* ─── Content ───────────────────────────────────────────────────────────── */
@@ -589,6 +627,7 @@ button.danger:hover:not(:disabled) {
 
 /* ─── Theme toggle ──────────────────────────────────────────────────────── */
 
+.icon-btn,
 .theme-toggle {
   flex-shrink: 0;
   width: 30px;
@@ -600,10 +639,12 @@ button.danger:hover:not(:disabled) {
   color: var(--text-muted);
 }
 
+.icon-btn:hover:not(:disabled),
 .theme-toggle:hover:not(:disabled) {
   color: var(--text);
 }
 
+.icon-btn svg,
 .theme-toggle svg {
   width: 15px;
   height: 15px;

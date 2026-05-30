@@ -5,6 +5,7 @@ import Toolbar from "./components/Toolbar.jsx";
 import ParameterList from "./components/ParameterList.jsx";
 import DetailPanel from "./components/DetailPanel.jsx";
 import DynamicIsland from "./components/DynamicIsland.jsx";
+import { useSidebar } from "./lib/useSidebar.js";
 
 const leafOf = (name) => splitParamName(name || "").leaf;
 
@@ -24,6 +25,7 @@ export default function App() {
   const [nameInput, setNameInput] = useState("");
   const [island, setIsland] = useState({ kind: "idle", region: "us-east-1", count: 0 });
   const [error, setError] = useState(null);
+  const sidebar = useSidebar();
 
   const itemsRef = useRef(items);
   itemsRef.current = items;
@@ -205,12 +207,28 @@ export default function App() {
         onNew={onNew}
         query={query}
         onQueryChange={setQuery}
+        sidebarCollapsed={sidebar.collapsed}
+        onToggleSidebar={sidebar.toggle}
       />
       {error && <p className="error" style={{ padding: "6px 16px" }}>{error}</p>}
-      <div className="layout">
-        <aside className="sidebar">
+      <div
+        className="layout"
+        style={{ gridTemplateColumns: sidebar.collapsed ? "1fr" : `${sidebar.width}px 1fr` }}
+      >
+        <aside className="sidebar" data-collapsed={sidebar.collapsed ? "" : undefined}>
           <ParameterList items={items} selected={selected} query={query} onSelect={onSelect} />
         </aside>
+        {!sidebar.collapsed && (
+          <div
+            className="resizer"
+            style={{ left: `${sidebar.width}px` }}
+            onMouseDown={sidebar.startResize}
+            onDoubleClick={sidebar.reset}
+            role="separator"
+            aria-orientation="vertical"
+            aria-label="Resize sidebar (double-click to reset)"
+          />
+        )}
         <section className="content">
           <DetailPanel
             secret={selectedSecret}
