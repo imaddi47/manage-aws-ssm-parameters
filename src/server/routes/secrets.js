@@ -13,7 +13,7 @@ const ALLOWED_TYPES = ["SecureString", "String", "StringList"];
  * @returns {string}
  */
 function resolveRegion(value) {
-  const region = value || DEFAULT_REGION;
+  const region = value ?? DEFAULT_REGION;
   if (!isAllowedRegion(region)) throw new HttpError(400, `Unsupported region: ${region}`);
   return region;
 }

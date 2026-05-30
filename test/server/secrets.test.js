@@ -67,6 +67,15 @@ test("invalid region is rejected with 400", async () => {
   assert.equal(res.status, 400);
 });
 
+test("POST with an invalid region is rejected with 400", async () => {
+  const { app } = build();
+  const res = await request(app)
+    .post("/api/secrets")
+    .set("X-SSM-Passphrase", "pw")
+    .send({ name: "/a/b", value: "x", region: "moon-1" });
+  assert.equal(res.status, 400);
+});
+
 test("reveal returns value and never stores it in audit", async () => {
   const { app, db } = build();
   const res = await request(app).get("/api/secrets/value?region=us-east-1&name=" + enc("/a/b"));
