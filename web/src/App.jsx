@@ -178,10 +178,11 @@ export default function App() {
     try {
       setIsland({ kind: "busy", label: "Deleting" });
       await api.deleteSecret(selected, pw, regionRef.current);
+      await loadList(regionRef.current);
+      if (opRef.current !== gen) return;
       setSelected(null);
       setMode("idle");
       setValue("");
-      await loadList(regionRef.current);
     } catch (e) {
       if (opRef.current !== gen) return;
       setIsland({ kind: "error", message: e.message });
