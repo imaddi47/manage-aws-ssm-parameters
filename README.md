@@ -11,6 +11,10 @@ passphrase-protected writes, dynamic region discovery, and a local SQLite audit 
 
 ## Screenshots
 
+> **Heads up:** in these images the parameter **paths are fully blacked out** and **~half of each
+> name is masked** — they're real account data. The redaction is applied only for these published
+> shots; the live UI shows paths and names in full.
+
 ![Master–detail admin UI: grouped parameter list with sensitive vs general parameters marked, Dynamic Island status pill, and region switcher](docs/screenshots/admin-ui.png)
 
 *Grouped parameter list — path muted, leaf bold — with **sensitive** (`SecureString`, lock + amber)

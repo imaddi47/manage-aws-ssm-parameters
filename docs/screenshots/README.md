@@ -10,10 +10,22 @@ Images referenced by the top-level `README.md`. Drop PNGs here with these names:
 
 ## How to capture
 
+These three PNGs are produced by [`scripts/screenshots.mjs`](../../scripts/screenshots.mjs), which
+boots the prod server, drives the UI headless at 1440×900, **masks** every path and ~52% of each
+name, then writes the files here — so no real path or full name is ever committed:
+
+```bash
+npm run build                                   # the script serves web/dist
+npm install --no-save playwright && npx playwright install chromium
+SSM_UI_PASSPHRASE=demo node scripts/screenshots.mjs
+```
+
+Capturing by hand instead? Build, start the prod server, open the views above at ~1440×900 — then
+mask the paths/names yourself before committing (see the safety note below).
+
 ```bash
 npm run build
 SSM_UI_PASSPHRASE=demo PORT=4123 NODE_ENV=production node src/server/index.js
-# open http://127.0.0.1:4123 in a browser at ~1440×900 and screenshot the views above
 ```
 
 ## ⚠️ Safety — do NOT screenshot a revealed value
